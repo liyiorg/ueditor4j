@@ -1,20 +1,24 @@
-<%@page import="com.baidu.ueditor.ConfigManager"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	import="com.baidu.ueditor.ActionEnter"
-    pageEncoding="UTF-8"%>
-<%@ page trimDirectiveWhitespaces="true" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ page import="com.baidu.ueditor.ConfigManager"%>
+<%@ page import="com.baidu.ueditor.ActionEnter"%>
 
 <%!
-ConfigManager getConfigManager(HttpServletRequest request){
+/**
+ *获取ueditor 配置管理
+ *@param request
+ *@param fileStorePath 文件存放根路径,为空时为项目根路径
+ *@return ConfigManager
+ */
+ConfigManager getConfigManager(HttpServletRequest request,String fileStorePath){
 	ServletContext application = request.getSession().getServletContext();
 	Object object = application.getAttribute("UEDITOR_configManager");
 	if(object != null){
 		return (ConfigManager)object;
 	}else{
-		String rootPath = application.getRealPath( "/" );
 		String contextPath = request.getContextPath();
 		String uri = request.getRequestURI();
-		ConfigManager configManager = ConfigManager.getInstance(rootPath, contextPath, uri);
+		String rootPath = application.getRealPath("/");
+		ConfigManager configManager = ConfigManager.getInstance(fileStorePath,rootPath, contextPath, uri);
 		request.getSession().getServletContext().setAttribute("UEDITOR_configManager",configManager);
 		return configManager;
 	}
@@ -22,14 +26,7 @@ ConfigManager getConfigManager(HttpServletRequest request){
 %>
 
 <%
-
     request.setCharacterEncoding( "utf-8" );
 	response.setHeader("Content-Type" , "text/html");
-	
-	//String rootPath = application.getRealPath( "/" );
-	//out.write( new ActionEnter( request, rootPath ).exec() );
-	
-	out.write( new ActionEnter( request, getConfigManager(request) ).exec() );
-	
+	out.write( new ActionEnter( request, getConfigManager(request,"E://temp")).exec() );
 %>
-
